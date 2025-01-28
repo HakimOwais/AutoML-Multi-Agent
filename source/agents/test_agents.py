@@ -1,5 +1,16 @@
-from groq import Groq
 import os
+from groq import Groq
+import sys
+from dotenv import load_dotenv
+
+sys.path.insert(1, "source")
+
+
+# Path to the .env file
+dotenv_path = os.path.join(os.path.dirname(__file__), "../.env")
+
+load_dotenv(dotenv_path)
+
 from prompts.agent_prompts import (agent_manager_prompt,
                                    data_agent_prompt,
                                    model_agent_prompt,
@@ -8,7 +19,8 @@ from prompts.agent_prompts import (agent_manager_prompt,
 
 # Initialize Groq client
 client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY"),
+    # api_key=os.environ.get("GROQ_API_KEY"),
+    api_key="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"
 )
 
 # Base Agent class
@@ -114,7 +126,6 @@ prompt_agent = PromptAgent(
     stream=False
 )
 
-# AutoML Agent class
 class AutoMLAgent(AgentBase):
     def __init__(self, role, model, description, data_path="./data", **kwargs):
         super().__init__(role, model, description, **kwargs)
@@ -122,7 +133,7 @@ class AutoMLAgent(AgentBase):
 
     def retrieve_dataset(self, query):
         """Retrieves a dataset based on user instructions or searches for one."""
-        dataset_path = os.path.join(self.data_path, "retrieved_dataset.csv")
+        dataset_path = os.path.join(self.data_path, "renttherunway_cleaned.csv")
         messages = [
             {
                 "role": "system",
@@ -140,7 +151,7 @@ class AutoMLAgent(AgentBase):
         with open(dataset_path, "w") as file:
             file.write(response.choices[0].message.content)
         return dataset_path
-    
+
     def preprocess_data(self, instructions):
         """Performs data preprocessing based on user instructions or best practices."""
         messages = [
@@ -152,7 +163,7 @@ class AutoMLAgent(AgentBase):
             },
             {
                 "role": "user",
-                "content": instructions,
+                "content": f"Instructions: {instructions}",
             },
         ]
         response = self.execute(messages)
@@ -169,7 +180,7 @@ class AutoMLAgent(AgentBase):
             },
             {
                 "role": "user",
-                "content": augmentation_details,
+                "content": f"Augmentation Details: {augmentation_details}",
             },
         ]
         response = self.execute(messages)
@@ -303,18 +314,36 @@ agents = {
     "operations": operations_agent
 }
 
-# Example usage
-user_input = "I need to preprocess a dataset for anomaly detection in financial transactions."
+# Preprocess data
+user_input = "I have uploaded the dataset which is obtained from rent the runway and this dataset is related to fit fiber clothing for women. Develop a model with atleast 90 percent of F1 score. Also its target variable is fit"
 preprocessed_data = automl_agent.preprocess_data(user_input)
-print(preprocessed_data)
+with open("data/preprocessed_data.txt", "w") as f:
+    f.write(preprocessed_data)
 
+# Retrieve models
 model_request = "Find the top 3 models for classifying this dataset."
 model_list = model_agent.retrieve_models(model_request)
-print(model_list)
+with open("data/model_list.txt", "w") as f:
+    f.write(model_list)
 
+# Deploy the model
 deployment_details = "Deploy the selected model as a web application."
 deployment_output = operations_agent.deploy_model(deployment_details)
-print(deployment_output)
+with open("data/deployment_output.txt", "w") as f:
+    f.write(deployment_output)
+
+# Example usage
+# user_input = "I need to preprocess a dataset for anomaly detection in financial transactions."
+# preprocessed_data = automl_agent.preprocess_data(user_input)
+# print(preprocessed_data)
+
+# model_request = "Find the top 3 models for classifying this dataset."
+# model_list = model_agent.retrieve_models(model_request)
+# print(model_list)
+
+# deployment_details = "Deploy the selected model as a web application."
+# deployment_output = operations_agent.deploy_model(deployment_details)
+# print(deployment_output)
 
 # The dataset is being accessed in the following methods:
 # - "retrieve_dataset" in the AutoMLAgent class.

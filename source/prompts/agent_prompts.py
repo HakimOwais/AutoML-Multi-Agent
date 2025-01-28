@@ -1,4 +1,4 @@
-# Prompts for various agents used in ML pipeline
+# Prompts for agents used in ML pipeline
 
 """
     This script contains a set of specialized agents designed for an automated machine learning (AutoML) project. 
