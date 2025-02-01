@@ -27,7 +27,7 @@ class CSVEmbeddingManager:
         self.client.reset()
         self.collection = self.client.get_or_create_collection(self.collection.name)
 
-    def embed_csv(self, csv_file_path: str) -> None:
+    def embed_csv(self, csv_file_path: str, batch_size: int = 1000) -> None:
         """
         Embeds the CSV data into the collection.
         Args:
@@ -42,14 +42,17 @@ class CSVEmbeddingManager:
         if 'id' not in df.columns:
             df['id'] = df.index.astype(str)
 
-        # Prepare data for embedding.
-        ids = df['id'].astype(str).tolist()
-        documents = df.drop(columns=['id'], errors='ignore').apply(lambda row: row.to_json(), axis=1).tolist()
-        metadatas = df.drop(columns=['id'], errors='ignore').to_dict(orient='records')
+        # Calculate the number of batches
+        num_batches = (len(df) // batch_size) + int(len(df) % batch_size > 0)
+        for i in range(num_batches):
+            batch_df = df[i * batch_size:(i+1) * batch_size]
+            ids = batch_df['id'].astype(str).tolist()
+            documents = batch_df.drop(columns=['id'], errors='ignore').apply(lambda row: row.to_json(), axis=1).tolist()
+            metadatas = batch_df.drop(columns=['id'], errors='ignore').to_dict(orient='records')
 
-        # Upsert data into the collection.
-        self.collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
-        print(f"[Memory] CSV data from {csv_file_path} embedded into collection '{self.collection.name}'.")
+            # Upsert data into the collection.
+            self.collection.upsert(ids=ids, documents=documents, metadatas=metadatas)
+            print(f"Batch {i+1}/{num_batches} embedded successfully.")
 
     def update_embedding(self, csv_file_path: str) -> None:
         """
