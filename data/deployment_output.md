@@ -1,114 +1,99 @@
-**Deploying the Model as a Web Application**
+**Deploying the Selected Model as a Web Application**
+======================================================
 
-To deploy the selected model as a web application, we will use the Gradio library, which provides a simple and intuitive way to create web-based interfaces for machine learning models.
+In this section, we will deploy the trained model as a web application using the Gradio library. Gradio is a Python library that allows us to create simple web-based interfaces for our models.
 
-### Step 1: Import the Required Libraries
+**Installing Required Libraries**
+--------------------------------
 
+Before we start, make sure to install the required libraries by running the following command:
+```bash
+pip install gradio
+```
+
+**Building the Web Application**
+-------------------------------
+
+Here is an example code snippet that demonstrates how to build a web application using Gradio:
 ```python
 import gradio as gr
-import pandas as pd
-import numpy as np
-from sklearn.model_selection import train_test_split
-from tensorflow.keras.models import load_model
-```
+import torch
+from torch import nn
+from torchvision import models
 
-### Step 2: Load the Trained Model
-
-```python
 # Load the trained model
-model = load_model('model.h5')
-```
+model = models.resnet50(pretrained=True)
+num_ftrs = model.fc.in_features
+model.fc = nn.Linear(num_ftrs, 10)  # Change the output layer to match the number of classes
 
-### Step 3: Define the Prediction Function
+# Load the state dictionary of the trained model
+model.load_state_dict(torch.load("model.pth"))
 
-```python
-# Define the prediction function
-def predict(input_data):
-    # Preprocess the input data
-    input_data = pd.DataFrame(input_data, columns=['feature1', 'feature2', 'feature3'])
-    
-    # Make predictions using the trained model
-    predictions = model.predict(input_data)
-    
-    # Return the predictions
-    return predictions
-```
+# Define a function that takes an input image and returns the predicted class
+def predict_image(image):
+    image = image.resize((224, 224))  # Resize the image to match the input shape of the model
+    image = torch.tensor([image]).permute(0, 3, 1, 2)  # Convert the image to a tensor
+    output = model(image)  # Pass the image through the model
+    _, predicted = torch.max(output, 1)  # Get the predicted class
+    return predicted.item()
 
-### Step 4: Create the Gradio Interface
-
-```python
-# Create the Gradio interface
-demo = gr.Interface(
-    fn=predict,
-    inputs=[
-        gr.Textbox(label='Feature 1'),
-        gr.Textbox(label='Feature 2'),
-        gr.Textbox(label='Feature 3')
-    ],
-    outputs=[
-        gr.Number(label='Prediction')
-    ],
-    title='Machine Learning Model Deployment',
-    description='Enter the input features to get a prediction from the model.'
+# Create a Gradio interface
+interface = gr.Interface(
+    predict_image,
+    gr.Image(shape=(224, 224), type="pil"),
+    "label",
+    title="Image Classification Model",
+    description="Upload an image to classify it"
 )
+
+# Launch the web application
+interface.launch()
 ```
 
-### Step 5: Launch the Gradio Interface
+**Running the Web Application**
+-----------------------------
 
-```python
-# Launch the Gradio interface
-if __name__ == '__main__':
-    demo.launch()
+To run the web application, save the above code snippet to a file (e.g., `app.py`) and run it using the following command:
+```bash
+python app.py
 ```
+
+This will launch a web application that allows users to upload an image and classify it using the trained model.
 
 **Model Evaluation**
+-------------------
 
-To evaluate the performance of the deployed model, we can use the following metrics:
-
-* Accuracy
-* Precision
-* Recall
-* F1-score
-
-We can use the following Python function to evaluate the model:
-
+To evaluate the model, we can use the following code snippet:
 ```python
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import torch
+from torch.utils.data import DataLoader
+from torchvision import datasets, transforms
 
-def evaluate_model(y_true, y_pred):
-    accuracy = accuracy_score(y_true, y_pred)
-    precision = precision_score(y_true, y_pred)
-    recall = recall_score(y_true, y_pred)
-    f1 = f1_score(y_true, y_pred)
-    
-    print('Model Evaluation Metrics:')
-    print('Accuracy:', accuracy)
-    print('Precision:', precision)
-    print('Recall:', recall)
-    print('F1-score:', f1)
+# Define a function to evaluate the model on a test dataset
+def evaluate_model(model, test_loader):
+    model.eval()
+    total_correct = 0
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images, labels = images.to(device), labels.to(device)
+            output = model(images)
+            _, predicted = torch.max(output, 1)
+            total_correct += (predicted == labels).sum().item()
+    accuracy = total_correct / len(test_loader.dataset)
+    return accuracy
+
+# Load the test dataset
+test_dataset = datasets.CIFAR10(root="./data", train=False, download=True, transform=transforms.ToTensor())
+test_loader = DataLoader(test_dataset, batch_size=64, shuffle=False)
+
+# Evaluate the model on the test dataset
+accuracy = evaluate_model(model, test_loader)
+print(f"Test Accuracy: {accuracy:.2f}%")
 ```
 
-To use this function, we need to provide the true labels (`y_true`) and the predicted labels (`y_pred`) as input.
+**Results**
+-----------
 
-**Example Use Case**
+The results of the model evaluation will be printed to the console, showing the test accuracy of the model.
 
-Suppose we have a dataset with the following features and labels:
-
-| Feature 1 | Feature 2 | Feature 3 | Label |
-| --- | --- | --- | --- |
-| 1.2 | 3.4 | 5.6 | 1 |
-| 2.3 | 4.5 | 6.7 | 0 |
-| 3.4 | 5.6 | 7.8 | 1 |
-| ... | ... | ... | ... |
-
-We can use the Gradio interface to input the features and get a prediction from the model. For example, if we input the following features:
-
-* Feature 1: 1.2
-* Feature 2: 3.4
-* Feature 3: 5.6
-
-The model will predict the label as 1.
-
-We can then use the `evaluate_model` function to evaluate the performance of the model using the true labels and predicted labels.
-
-Note: This is a simplified example and may not represent a real-world scenario. The actual deployment and evaluation of a machine learning model can be more complex and may require additional steps and considerations.
+Note: This is just an example code snippet and may need to be modified to suit your specific use case. Additionally, this code assumes that the model is trained on the CIFAR-10 dataset, but you can modify it to work with other datasets and models.

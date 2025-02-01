@@ -19,8 +19,7 @@ from prompts.agent_prompts import (agent_manager_prompt,
 
 # Initialize Groq client
 client = Groq(
-    # api_key=os.environ.get("GROQ_API_KEY"),
-    api_key="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"
+    api_key=os.environ.get("GROQ_API_KEY"),
 )
 
 # Base Agent class
