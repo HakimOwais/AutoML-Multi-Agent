@@ -1,21 +1,21 @@
-```json
+'''json
 {
-    "task": "Develop a heart disease detection model with at least 90% accuracy",
-    "priority": "High",
-    "deadline": "2 weeks",
+    "task": "heart_disease_detection",
+    "priority": "high",
+    "deadline": "2_weeks",
     "resources": [
         {
-            "type": "Data Scientist",
+            "type": "data_scientist",
+            "quantity": 2
+        },
+        {
+            "type": "machine_learning_engineer",
             "quantity": 1
         },
         {
-            "type": "ML Research Engineer",
-            "quantity": 1
-        },
-        {
-            "type": "MLOps Engineer",
+            "type": "MLOps_engineer",
             "quantity": 1
         }
     ]
 }
-```
+'''
