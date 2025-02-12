@@ -19,9 +19,6 @@ async def main():
     # Optionally, embed CSV data (uncomment if needed):
     await csv_embedder.embed_csv("data/heart.csv")
 
-    # JSON_SCHEMA = JSON_SCHEMA
-    # agents = agents
-
     # --- Initialize and run the Pipeline Agent ---
     pipeline = PipelineAgent(agents=agents, state=state, csv_embedder=csv_embedder, dataset_dir="data")
 
