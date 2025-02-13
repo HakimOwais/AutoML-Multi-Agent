@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-import streamlit as st
+import streamlit_demo as st
 
 # Import your pipeline modules
 from source.pipeline_state import PipelineState

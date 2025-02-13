@@ -3,3 +3,5 @@ sentence_transformers
 tqdm
 pandas
 chromadb
+streamlit
+
