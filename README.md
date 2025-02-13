@@ -64,7 +64,7 @@ In addition, a set of carefully designed agent prompts guides the large language
 
 - **Git:** To clone the repository.
 - **Conda:** For managing the Python environment.
-- **Python 3.8+** (recommended).
+- **Python 3.10** (recommended).
 
 ### Installation
 
@@ -79,7 +79,7 @@ In addition, a set of carefully designed agent prompts guides the large language
 
 ### 1. Create a Conda Environment
 ```bash
-conda create -n automl-agent python=3.8
+conda create -n automl-agent python=3.10
 ```
 
 ### 2. Activate the Conda Environment
@@ -118,7 +118,7 @@ Contributions are welcome! Follow these steps:
 ---
 
 ## Acknowledgments
-- **Research Inspiration**: [AutoML-Agent: A Multi-Agent LLM Framework](https://example.com) (replace with actual link).  
+- **Research Inspiration**: [AutoML-Agent: A Multi-Agent LLM Framework](https://arxiv.org/abs/2410.02958) .  
 - Thanks to all open-source contributors and tools used in this project.  
 
 ---
