@@ -99,7 +99,10 @@ pip install -r requirements.txt
 1. **Prepare Your Dataset**:  
    Place your dataset in the `data` folder. Copy the **relative path** to your dataset (e.g., `data/your_dataset.csv`) and update the path in `main.py`.
 
-2. **Run the Pipeline**:
+2. Setup your GROQ API KEY in .env file as:
+   GROQ_API_KEY = "your api key"
+
+3. **Run the Pipeline**:
    ```bash
    python main.py
    ```
