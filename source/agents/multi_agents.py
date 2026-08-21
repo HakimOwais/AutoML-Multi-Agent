@@ -69,8 +69,8 @@ class AutoMLAgent(ModelAgentBase):
         return response.choices[0].message.content
 
 class ModelAgent(ModelAgentBase):
-    def __init__(self, role, model, description, **kwargs):
-        super().__init__(role, model, description, **kwargs)
+    def __init__(self, client, role, model, description, **kwargs):
+        super().__init__(client, role, model, description, **kwargs)
 
     async def retrieve_models(self, dataset_details: str) -> str:
         messages = [
@@ -97,8 +97,8 @@ class ModelAgent(ModelAgentBase):
         return response.choices[0].message.content
 
 class OperationsAgent(ModelAgentBase):
-    def __init__(self, role, model, description, **kwargs):
-        super().__init__(role, model, description, **kwargs)
+    def __init__(self, client, role, model, description, **kwargs):
+        super().__init__(client, role, model, description, **kwargs)
 
     async def deploy_model(self, deployment_details: str) -> str:
         messages = [

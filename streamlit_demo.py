@@ -1,7 +1,7 @@
 import os
 import json
 import asyncio
-import streamlit_demo as st
+import streamlit as st
 
 # Import your pipeline modules
 from source.pipeline_state import PipelineState
@@ -92,5 +92,5 @@ def main():
             st.subheader("Pipeline Results")
             st.json(results)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    main()
