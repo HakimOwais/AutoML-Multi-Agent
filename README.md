@@ -31,7 +31,7 @@ Building an ML solution means repeating the same expensive loop: understand the 
 | | |
 |---|---|
 | 🧠 **Role-specialised agent team** | Five agents — Manager, Prompt, Data, Model, Operations — each with a purpose-built system prompt modelled on a real ML team: PM, data scientist, ML researcher, MLOps engineer. |
-| 🔍 **RAG-grounded, not hallucinated** | Every CSV row is embedded with `thenlper/gte-small` into a persistent **ChromaDB** collection (cosine similarity, HNSW index). Agents retrieve the top-*k* most relevant records, so recommendations are grounded in real data rather than guesses. |
+| 🔍 **RAG-grounded, not hallucinated** | Every CSV row is embedded with `thenlper/gte-small` into a persistent **ChromaDB** collection (cosine similarity). Agents retrieve the top-*k* most relevant records, so recommendations are grounded in real data rather than guesses. |
 | ⚡ **Fully asynchronous** | Blocking LLM calls and CPU-bound embedding work are dispatched via `asyncio.to_thread`, keeping the event loop free — the pipeline handles long-running multi-agent runs without stalling. |
 | 💾 **Stateful, auditable workflow** | A dedicated `PipelineState` object tracks phase, step, and per-agent memory, persisting to JSON after **every** agent hand-off — so a run is inspectable, not a black box. |
 | 🧩 **Factory-based agent registry** | Agents are declared once in an `agent_factory` and injected into the orchestrator. Swapping a model (Llama 3.3 70B → Mixtral → Gemma 2) or adding a sixth agent is a config change, not a refactor. |
